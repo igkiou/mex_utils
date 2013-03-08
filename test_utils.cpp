@@ -81,7 +81,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	plhs[4] = foo.get_array();
 	std::vector<bool> dummy(10, false);
 	plhs[5] = mex::MxNumeric<bool>(dummy).get_array();
-	mexPrintf("M %d N %d size %d numel %d.\n", foo.M(), foo.N(), foo.size(), foo.numel());
+//	mexPrintf("M %d N %d size %d numel %d.\n", foo.M(), foo.N(), foo.size(), foo.numel());
 	plhs[6] = mex::MxString(std::string("gkiou")).get_array();
 	plhs[7] = mex::MxString("gkiou").get_array();
 	std::string gkiou("gkiou");
