@@ -842,7 +842,7 @@ public:
 	MxStruct(const std::string& scalarName, const PMxArrayNative scalarVar)
 			: MxArray(mxCreateStructMatrix(static_cast<mwSize>(1),
 										static_cast<mwSize>(1),
-										static_cast<mwSize>(1),
+										static_cast<mwSize>(0),
 										NULL),
 					MxStructClass()) {
 		addField_sub(&scalarName, &scalarVar, static_cast<mwSize>(1));
@@ -851,7 +851,7 @@ public:
 	MxStruct(const std::string& scalarName, const PMxArray scalarVar)
 	: MxArray(mxCreateStructMatrix(static_cast<mwSize>(1),
 								static_cast<mwSize>(1),
-								static_cast<mwSize>(1),
+								static_cast<mwSize>(0),
 								NULL),
 			MxStructClass()) {
 		addField_sub(&scalarName, &scalarVar, static_cast<mwSize>(1));
@@ -862,7 +862,7 @@ public:
 			: MxArray((vecName.size() == vecVar.size())
 					?(mxCreateStructMatrix(static_cast<mwSize>(1),
 										static_cast<mwSize>(1),
-										static_cast<mwSize>(1),
+										static_cast<mwSize>(0),
 										NULL))
 					:(NULL),
 					MxStructClass()) {
@@ -877,7 +877,7 @@ public:
 			: MxArray((vecName.size() == vecVar.size())
 					?(mxCreateStructMatrix(static_cast<mwSize>(1),
 										static_cast<mwSize>(1),
-										static_cast<mwSize>(1),
+										static_cast<mwSize>(0),
 										NULL))
 					:(NULL),
 					MxStructClass()) {
