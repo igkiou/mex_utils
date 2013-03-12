@@ -75,9 +75,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	temp = mex::MxNumeric<float>(height, width);
 	plhs[2] = temp.get_array();
 	temp[1] = 5.0;
-	plhs[3] = mxCreateNumericMatrix(height, width, mex::MxClass<bool>(), mxREAL);
+	plhs[3] = mxCreateNumericMatrix(height, width, mex::MxNumericClass<bool>().get_classId(), mxREAL);
 	mex::MxNumeric<int> foo(height, width);
-	foo.data()[0] = 10;
+	foo.getData()[0] = 10;
 	plhs[4] = foo.get_array();
 	std::vector<bool> dummy(10, false);
 	plhs[5] = mex::MxNumeric<bool>(dummy).get_array();
@@ -101,7 +101,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	std::vector<int> perm;
 	perm.push_back(2);
 	perm.push_back(1);
-	perm.push_back(4);
+	perm.push_back(3);
 	plhs[0] = temp.permute(perm).get_array();
 	plhs[1] = temp.get_array();
 }
