@@ -332,9 +332,6 @@ public:
 	MxNumeric()
 			: MxArray(MxNumericClass<NumericType>()) {	}
 
-	/*
-	 * TODO: Check if this allows copy-construction from base or other MxArrays.
-	 */
 	MxNumeric(const MxNumeric<NumericType>& mxNumeric)
 			: MxArray(mxNumeric.get_array(),
 					MxNumericClass<NumericType>()) {	}
@@ -783,10 +780,6 @@ public:
 		return static_cast<PMxArrayNative*>(mxGetData(m_array));
 	}
 
-	/*
-	 * TODO: Template this, and add version for returning PMxArray, with default
-	 * being as is now.
-	 */
 	inline const std::vector<PMxArrayNative> vectorize() const {
 		std::vector<PMxArrayNative> retArg;
 		for (int iter = 0, end = getNumberOfElements(); iter < end; ++iter) {
@@ -835,10 +828,6 @@ public:
 		mexAssert(m_class.get_classId() == mxGetClassID(array));
 	}
 
-	/*
-	 * TODO: Check that mxCreateStructMatrix can be called with NULL in name
-	 * fields.
-	 */
 	MxStruct(const std::string& scalarName, const PMxArrayNative scalarVar)
 			: MxArray(mxCreateStructMatrix(static_cast<mwSize>(1),
 										static_cast<mwSize>(1),
@@ -931,10 +920,6 @@ public:
 		return getFieldNumber<int>(name);
 	}
 
-	/*
-	 * TODO: Check that here mxGetFieldNameByNumber does no allocation and
-	 * copy, so no dealloc is needed.
-	 */
 	template <typename IndexType>
 	inline std::string getFieldName(const IndexType i) const {
 		return std::string(mxGetFieldNameByNumber(m_array,
