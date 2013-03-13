@@ -129,27 +129,27 @@ public:
 	MxNumericClass()
 				: MxClass(mxUNKNOWN_CLASS) {	}
 };
-template <> MxNumericClass<unsigned char>::MxNumericClass()
+template <> inline MxNumericClass<unsigned char>::MxNumericClass()
 											: MxClass(mxUINT8_CLASS) {	}
-template <> MxNumericClass<char>::MxNumericClass()
+template <> inline MxNumericClass<char>::MxNumericClass()
 											: MxClass(mxINT8_CLASS) {	}
-template <> MxNumericClass<short>::MxNumericClass()
+template <> inline MxNumericClass<short>::MxNumericClass()
 											: MxClass(mxINT16_CLASS) {	}
-template <> MxNumericClass<unsigned short>::MxNumericClass()
+template <> inline MxNumericClass<unsigned short>::MxNumericClass()
 											: MxClass(mxUINT16_CLASS) {	}
-template <> MxNumericClass<int>::MxNumericClass()
+template <> inline MxNumericClass<int>::MxNumericClass()
 											: MxClass(mxINT32_CLASS) {	}
-template <> MxNumericClass<unsigned int>::MxNumericClass()
+template <> inline MxNumericClass<unsigned int>::MxNumericClass()
 											: MxClass(mxUINT32_CLASS) {	}
-template <> MxNumericClass<long>::MxNumericClass()
+template <> inline MxNumericClass<long>::MxNumericClass()
 											: MxClass(mxINT64_CLASS) {	}
-template <> MxNumericClass<unsigned long>::MxNumericClass()
+template <> inline MxNumericClass<unsigned long>::MxNumericClass()
 											: MxClass(mxUINT64_CLASS) {	}
-template <> MxNumericClass<float>::MxNumericClass()
+template <> inline MxNumericClass<float>::MxNumericClass()
 											: MxClass(mxSINGLE_CLASS) {	}
-template <> MxNumericClass<double>::MxNumericClass()
+template <> inline MxNumericClass<double>::MxNumericClass()
 											: MxClass(mxDOUBLE_CLASS) {	}
-template <> MxNumericClass<bool>::MxNumericClass()
+template <> inline MxNumericClass<bool>::MxNumericClass()
 											: MxClass(mxLOGICAL_CLASS) {	}
 
 class MxStringClass : public MxClass {
