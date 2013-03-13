@@ -86,6 +86,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	mex::MxNumeric<int> foo(height, width);
 	foo.getData()[0] = 10;
 	plhs[4] = foo.get_array();
+	std::vector<int> veci = foo.vectorize();
+	std::cout << "length " << veci.size() << std::endl;
+	for (int iter = 0, end = veci.size(); iter < end; ++iter) {
+		std::cout << "iter " << iter << " value "<< veci[iter] << std::endl;
+	}
 	std::vector<bool> dummy(10, false);
 	plhs[5] = mex::MxNumeric<bool>(dummy).get_array();
 //	mexPrintf("M %d N %d size %d numel %d.\n", foo.M(), foo.N(), foo.size(), foo.numel());
