@@ -78,7 +78,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 //	tempg[0] = 0;
 	plhs[2] = temp.get_array();
 	temp[1] = 5.0;
-	plhs[3] = mxCreateNumericMatrix(height, width, mex::MxNumericClass<bool>().get_classId(), mxREAL);
+	std::vector<float> vec;
+	vec.push_back(10);
+	vec.push_back(20);
+	vec.push_back(30);
+	plhs[3] = mex::MxNumeric<float>(vec).get_array();
 	mex::MxNumeric<int> foo(height, width);
 	foo.getData()[0] = 10;
 	plhs[4] = foo.get_array();
@@ -122,5 +126,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	perm.push_back(3);
 	plhs[0] = temp.permute(perm).get_array();
 	plhs[1] = temp.get_array();
+	double* a = (double*) malloc(100 * sizeof(double));
+	double* b = (double*) malloc(100 * sizeof(double));
+	memcpy(a, b, 100 * sizeof(double));
 }
 

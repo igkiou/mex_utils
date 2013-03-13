@@ -394,8 +394,12 @@ public:
 													.get_classId(),
 												mxREAL),
 							MxNumericClass<NumericType>()) {
-		const NumericType temp = vecVar[0];
-		init(&temp);
+		NumericType *val = static_cast<NumericType*>(mxGetData(m_array));
+		std::copy(vecVar.begin(), vecVar.end(), val);
+		/*
+		 * TODO: Find why this causes lvalue problem.
+		 */
+//		init(&vecVar[0]);
 	}
 
 	template <typename IndexType>
