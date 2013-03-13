@@ -703,6 +703,13 @@ public:
 		init(&vecVar[0]);
 	}
 
+	explicit MxCell(const std::vector<PMxArray>& vecVar)
+				: MxArray(mxCreateCellMatrix(static_cast<mwSize>(vecVar.size()),
+											static_cast<mwSize>(1)),
+						MxCellClass()) {
+		init(&vecVar[0]);
+	}
+
 	/*
 	 * TODO: Remember to change this if I add constructor from MxArray to all
 	 * derived classes of MxArray.
