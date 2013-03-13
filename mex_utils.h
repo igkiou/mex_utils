@@ -534,8 +534,10 @@ private:
 			++iter) {
 			indexVector.push_back(iter + 1);
 		}
-		typename std::vector<IndexType>::const_iterator first(indexPermutation.begin());
-		typename std::vector<IndexType>::const_iterator last(indexPermutation.end());
+		typename std::vector<IndexType>::const_iterator first(
+													indexPermutation.begin());
+		typename std::vector<IndexType>::const_iterator last(
+													indexPermutation.end());
 		typename std::vector<IndexType>::iterator d_first(indexVector.begin());
 		if (first != last) {
 			typename std::vector<IndexType>::iterator d_last = d_first;
@@ -924,7 +926,8 @@ public:
 	inline std::vector<std::string> getFieldNames() const {
 		std::vector<std::string> retArg(0);
 		for (int iter = 0, end = getNumberOfFields(); iter < end; ++iter) {
-			retArg.push_back(std::string(mxGetFieldNameByNumber(m_array, iter)));
+			retArg.push_back(std::string(mxGetFieldNameByNumber(m_array,
+															iter)));
 		}
 		return retArg;
 	}
