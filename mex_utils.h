@@ -26,17 +26,12 @@
 /*
  * TODO: Overarching design goal: No MATLAB internals visible to public.
  * TODO: Add struct array support.
- * TODO: Add support for initialization by const mxArray*.
+ * TODO: Add support for initialization by const mxArray*. Probably will need to
+ * create const_MxArray class and class hierarchy.
  * TODO: Is giving access to a data element with [] im MxCell and MxStruct
  * equivalent to using mxSetCell and mxSetField, respectively?
  * TODO: Provide cast from base MxArray to other types?
  * TODO: Add constructor of derived classes from base MxArray?
- * TODO: Provide templated version of MxArray that uses mxClassID instead of
- * C/C++ intrinsic types?
- * TODO: Provide index-based accessor to data?
- * TODO: Change uses of mxCELL, mxCHAR and mxSTRUCT to refer to MxClassId
- * typedefs.
- * TODO: Replace int for indices with template.
  */
 namespace mex {
 
