@@ -656,15 +656,13 @@ public:
 		return *this;
 	}
 
+	/*
+	 * TODO: Because of this, initialization from scalar PMxArrayNative is
+	 * disabled.
+	 */
 	explicit MxCell(const PMxArrayNative array)
-				: MxArray((mxGetClassID(array) == MxCellClass().get_classId())
-						?(array)
-						:(mxCreateCellMatrix(static_cast<mwSize>(1),
-											static_cast<mwSize>(1))),
-						MxCellClass()) {
-		if (m_class.get_classId() != mxGetClassID(array)) {
-			init(&array);
-		}
+					: MxArray(array, MxCellClass()) {
+		mexAssert(m_class.get_classId() == mxGetClassID(array));
 	}
 
 	template <typename IndexType>
