@@ -32,6 +32,7 @@
  * equivalent to using mxSetCell and mxSetField, respectively?
  * TODO: Provide cast from base MxArray to other types?
  * TODO: Add constructor of derived classes from base MxArray?
+ * TODO: Add general matrix views to avoid permute when possible?
  */
 namespace mex {
 
