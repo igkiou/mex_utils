@@ -135,13 +135,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	double* a = (double*) malloc(100 * sizeof(double));
 	double* b = (double*) malloc(100 * sizeof(double));
 	memcpy(a, b, 100 * sizeof(double));
-	mex::MatFile file("test.mat", "u");
+	mex::MatFile file("test.mat", "r");
 	std::vector<std::string> varnames = file.getVariableNames();
 	std::cout << "number of variables: " << varnames.size() << std::endl;
 	for (int iter = 0, end = varnames.size(); iter < end; ++iter) {
 		std::cout << "variable " << iter << " name: " << varnames[iter] << std::endl;
 	}
-	file.write(temp, "temp");
+	file.write(temp, "temp1");
 	plhs[1] = file.read(varnames[0]).get_array();
 	file.clear(varnames[0]);
 }

@@ -138,11 +138,17 @@ public:
 	template <typename MxArrayType>
 	inline bool write(const MxArrayType& variable,
 					const std::string& variableName) {
+		mexAssert((!strcmp(m_accessType.c_str(), "w"))
+				|| (!strcmp(m_accessType.c_str(), "w7.3"))
+				|| (!strcmp(m_accessType.c_str(), "u")));
 		return matPutVariable(m_file, variableName.c_str(),
 							variable.get_array());
 	}
 
 	inline bool clear(const std::string& variableName) {
+		mexAssert((!strcmp(m_accessType.c_str(), "w"))
+				|| (!strcmp(m_accessType.c_str(), "w7.3"))
+				|| (!strcmp(m_accessType.c_str(), "u")));
 		return (matDeleteVariable(m_file, variableName.c_str()) == 0);
 	}
 
