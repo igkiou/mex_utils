@@ -33,6 +33,9 @@
  * TODO: Provide cast from base MxArray to other types?
  * TODO: Add constructor of derived classes from base MxArray?
  * TODO: Add general matrix views to avoid permute when possible?
+ * TODO: Change implementation to private membership in MxArray. Will need to
+ * fix the copy constructors and assignment operator.
+ * TODO: Maybe add support for mxSetData? Would be unsafe.
  */
 namespace mex {
 
@@ -53,35 +56,6 @@ namespace mex {
 		#cond, __FILE__, __LINE__); \
 	} while (0)
 #endif
-
-template <typename T, typename U>
-class ConstMap {
-public:
-	/// Constructor with a single key-value pair
-	ConstMap(const T& key, const U& val) {
-		m_map[key] = val;
-	}
-
-	/// Consecutive insertion operator
-	ConstMap<T, U>& operator()(const T& key, const U& val) {
-		m_map[key] = val;
-		return *this;
-	}
-
-	inline const std::map<T, U>& get_map() const {
-		return m_map;
-	}
-
-	/// Lookup operator; fail if not found
-	inline U operator [](const T& key) const {
-		typename std::map<T,U>::const_iterator iter = m_map.find(key);
-		mexAssertEx(iter != m_map.end(), "Value not found");
-		return (*iter).second;
-	}
-
-private:
-	std::map<T, U> m_map;
-};
 
 class MxClass {
 public:
@@ -1012,6 +986,98 @@ private:
 					arrVar[iter]->get_array());
 		}
 	}
+};
+
+template <typename T, typename U>
+class ConstMap {
+public:
+	/// Constructor with a single key-value pair
+	ConstMap(const T& key, const U& value) :
+		m_map() {
+		m_map[key] = value;
+	}
+
+	/// Consecutive insertion operator
+	ConstMap<T, U>& operator()(const T& key, const U& value) {
+		m_map[key] = value;
+		return *this;
+	}
+
+	inline const std::map<T, U>& get_map() const {
+		return m_map;
+	}
+
+	/// Lookup operator; fail if not found
+	inline U operator [](const T& key) const {
+		typename std::map<T, U>::const_iterator iter = m_map.find(key);
+		mexAssertEx(iter != m_map.end(), "Value not found");
+		return (*iter).second;
+	}
+
+private:
+	std::map<T, U> m_map;
+};
+
+
+template <typename T, typename U>
+class ConstBiMap {
+public:
+	/// Constructor with a single key-value pair
+	ConstBiMap(const T& key, const U& value) :
+		m_mapLeftToRight(),
+		m_mapRightToLeft() {
+		m_mapLeftToRight[key] = value;
+		m_mapRightToLeft[value] = key;
+	}
+
+	/// Consecutive insertion operator
+	ConstBiMap<T, U>& operator()(const T& key, const U& value) {
+		m_mapLeftToRight[key] = value;
+		m_mapRightToLeft[value] = key;
+		return *this;
+	}
+
+	inline const std::map<T, U>& get_mapLeftToRight() const {
+		return m_mapLeftToRight;
+	}
+
+	inline const std::map<U, T>& get_mapRightToLeft() const {
+		return m_mapRightToLeft;
+	}
+
+	/// Lookup operator; fail if not found
+	inline U operator [](const T& key) const {
+		typename std::map<T, U>::const_iterator iter = m_mapLeftToRight.find(key);
+		mexAssertEx(iter != m_mapLeftToRight.end(), "Value not found");
+		return (*iter).second;
+	}
+
+	inline T find(const U& value) const {
+		typename std::map<U, T>::const_iterator iter = m_mapRightToLeft.find(value);
+		mexAssertEx(iter != m_mapRightToLeft.end(), "Key not found");
+		return (*iter).second;
+	}
+
+private:
+	std::map<T, U> m_mapLeftToRight;
+	std::map<U, T> m_mapRightToLeft;
+};
+
+class MxObject {
+public:
+
+	inline virtual MxArray getAttribute(const mex::MxString& /* attributeName */) const {
+		return mex::MxArray();
+	}
+	inline virtual MxArray getAttribute() const {
+		return mex::MxArray();
+	}
+
+	inline virtual void setAttribute(const mex::MxArray& /* attribute */,
+					const mex::MxString& /* attributeName */) {	}
+	inline virtual void setAttribute(const mex::MxStruct& /* attributes */ ) {	}
+
+	virtual ~MxObject() {	};
 };
 
 } /* name space mex */

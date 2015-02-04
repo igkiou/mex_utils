@@ -1,20 +1,24 @@
-# PRODUCE_REPORTS = 1 
-# USE_GUIDE = 1
-# GENERATE_PROFILE = 1 
-# USE_PROFILE = 1
+USE_GCC = 1
 DEBUG_MODE = 1
 
-# USE_GCC = 1
-include gcc.mk
+CFLAGS =
+LDFLAGS =
+INCLUDES =
+LIBS =
+
+ifeq ($(USE_GCC), 1)
+	include gcc.mk
+else
+	include icc.mk
+endif
+
+include matlab.mk
 
 all: test_utils.$(MEXEXT)
 
-%.$(MEXEXT): %.o
-	$(CC) $(LDFLAGS) $(INCLUDES) $(LIBS) $(CFLAGS) -o $@ $^
+%.$(MEXEXT): %.cpp mex_utils.h
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) -o $@  $<  $(LIBS) 
 
-%.o: %.cpp mex_utils.h
-	$(CC) $(INCLUDES) $(CFLAGS) -c -o $@ $<
-	
 clean:
 	rm -rf *.o *~
 
