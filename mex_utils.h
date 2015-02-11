@@ -36,6 +36,8 @@
  * TODO: Change implementation to private membership in MxArray. Will need to
  * fix the copy constructors and assignment operator.
  * TODO: Maybe add support for mxSetData? Would be unsafe.
+ * TODO: Update to take advantage of C++11 move semantics, especially for better
+ *  safety.
  */
 namespace mex {
 
