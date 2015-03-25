@@ -257,7 +257,7 @@ public:
 	}
 
 	template <typename NumericType>
-	inline bool is() const {
+	inline bool isNumeric() const {
 		return m_class == MxNumericClass<NumericType>();
 	}
 
@@ -1065,22 +1065,29 @@ private:
 	std::map<U, T> m_mapRightToLeft;
 };
 
-class MxObject {
-public:
+//class MxAttributeInterface {
+//public:
+//
+//	virtual MxArray getValue() const = 0;
+//	virtual void setValue(const MxArray& value) const = 0;
+//	virtual MxString getName() const = 0;
+//
+//	virtual ~MxAttributeInterface() {	};
+//
+//};
 
-	inline virtual MxArray getAttribute(const mex::MxString& /* attributeName */) const {
-		return mex::MxArray();
-	}
-	inline virtual MxArray getAttribute() const {
-		return mex::MxArray();
-	}
-
-	inline virtual void setAttribute(const mex::MxArray& /* attribute */,
-					const mex::MxString& /* attributeName */) {	}
-	inline virtual void setAttribute(const mex::MxStruct& /* attributes */ ) {	}
-
-	virtual ~MxObject() {	};
-};
+//class MxObjectInterface {
+//public:
+//
+//	virtual MxArray getAttribute(const mex::MxString& attributeName) const = 0;
+//	virtual MxArray getAttribute() const const = 0;
+//
+//	virtual void setAttribute(const mex::MxString& attributeName,
+//					const mex::MxArray& attribute) = 0;
+//	virtual void setAttribute(const mex::MxStruct& attributes) = 0;
+//
+//	virtual ~MxObjectInterface() {	};
+//};
 
 } /* name space mex */
 
