@@ -38,6 +38,9 @@
  * TODO: Maybe add support for mxSetData? Would be unsafe.
  * TODO: Update to take advantage of C++11 move semantics, especially for better
  *  safety.
+ * TODO: Remove public copy constructor and copy operator of MxArray to avoid
+ * slicing and force use of get_array.
+ * TODO: Change string include to cstring and fix std::.
  */
 namespace mex {
 
