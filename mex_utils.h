@@ -13,7 +13,7 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <string.h>
+#include <cstring>
 
 /*
  * TODO: Maybe include these inside mex namespace, to make sure mex:: needs to
@@ -38,9 +38,6 @@
  * TODO: Maybe add support for mxSetData? Would be unsafe.
  * TODO: Update to take advantage of C++11 move semantics, especially for better
  *  safety.
- * TODO: Remove public copy constructor and copy operator of MxArray to avoid
- * slicing and force use of get_array.
- * TODO: Change string include to cstring and fix std::.
  */
 namespace mex {
 
@@ -162,14 +159,16 @@ public:
 		  m_class() {	}
 
 	/*
-	 * Only copies pointer, does not do "deep copy".
+	 * Only copies pointer, does not do "deep copy". Care must be taken when
+	 * using this constructor to avoid slicing of derived classes.
 	 */
 	MxArray(const MxArray& other)
 		: m_array(other.m_array),
 		  m_class() {	}
 
 	/*
-	 * Only copies pointer, does not do "deep copy".
+	 * Only copies pointer, does not do "deep copy".  Care must be taken when
+	 * using this operator to avoid slicing of derived classes.
 	 */
 	MxArray& operator=(const MxArray& other) {
 		if (this != &other) {
@@ -500,7 +499,7 @@ public:
 private:
 	void init(const NumericType* arrVar) {
 		NumericType *val = static_cast<NumericType*>(mxGetData(m_array));
-		memcpy(static_cast<void*>(val), static_cast<const void*>(arrVar),
+		std::memcpy(static_cast<void*>(val), static_cast<const void*>(arrVar),
 			getNumberOfElements<size_t>() * sizeof(NumericType));
 	}
 
@@ -596,7 +595,7 @@ public:
 		mxChar *destination = static_cast<mxChar*>(mxGetData(m_array));
 		const mxChar *origin = static_cast<const mxChar*>(
 											mxGetData(mxString.get_array()));
-		memcpy(static_cast<void*>(destination),
+		std::memcpy(static_cast<void*>(destination),
 			static_cast<const void*>(origin),
 			getNumberOfElements<size_t>() * sizeof(mxChar));
 		m_string = mxString.get_string();
