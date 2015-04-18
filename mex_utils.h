@@ -9,6 +9,7 @@
 #define MEX_UTILS_H_
 
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <map>
 #include <string>
@@ -40,6 +41,10 @@
  * TODO: Maybe replace default implementations with copy-and-swap?
  * TODO: Provide iterators for easy use with STL and new C++11 loops.
  * TODO: Maybe provide StringCell specialization.
+ * TODO: Change MxNumeric template definition to prevent instantiations by
+ * non-appropriate types.
+ * TODO: Remove unsafe conversions for MxClass.
+ * TODO: Make ID in MxClass directly accessible.
  */
 namespace mex {
 
@@ -63,8 +68,8 @@ namespace mex {
 
 class MxClass {
 public:
-	MxClass()
-		: m_classId(mxUNKNOWN_CLASS) {	}
+	MxClass() :
+			m_classId(mxUNKNOWN_CLASS) {}
 
 	MxClass(const MxClass& other) = default;
 
@@ -98,7 +103,7 @@ public:
 
 protected:
 	explicit MxClass(const mxClassID mxClass)
-		: m_classId(mxClass) {	}
+		: m_classId(mxClass) {}
 
 private:
 	mxClassID m_classId;
@@ -108,7 +113,7 @@ template <typename NumericType>
 class MxNumericClass : public MxClass {
 public:
 	MxNumericClass()
-				: MxClass(mxUNKNOWN_CLASS) {	}
+				: MxClass(mxUNKNOWN_CLASS) {}
 };
 
 /*
@@ -127,44 +132,44 @@ public:
  * 		mxLogical	-	bool
  */
 template <> inline MxNumericClass<UINT8_T>::MxNumericClass()
-											: MxClass(mxUINT8_CLASS) {	}
+											: MxClass(mxUINT8_CLASS) {}
 template <> inline MxNumericClass<INT8_T>::MxNumericClass()
-											: MxClass(mxINT8_CLASS) {	}
+											: MxClass(mxINT8_CLASS) {}
 template <> inline MxNumericClass<INT16_T>::MxNumericClass()
-											: MxClass(mxINT16_CLASS) {	}
+											: MxClass(mxINT16_CLASS) {}
 template <> inline MxNumericClass<UINT16_T>::MxNumericClass()
-											: MxClass(mxUINT16_CLASS) {	}
+											: MxClass(mxUINT16_CLASS) {}
 template <> inline MxNumericClass<INT32_T>::MxNumericClass()
-											: MxClass(mxINT32_CLASS) {	}
+											: MxClass(mxINT32_CLASS) {}
 template <> inline MxNumericClass<UINT32_T>::MxNumericClass()
-											: MxClass(mxUINT32_CLASS) {	}
+											: MxClass(mxUINT32_CLASS) {}
 template <> inline MxNumericClass<INT64_T>::MxNumericClass()
-											: MxClass(mxINT64_CLASS) {	}
+											: MxClass(mxINT64_CLASS) {}
 template <> inline MxNumericClass<UINT64_T>::MxNumericClass()
-											: MxClass(mxUINT64_CLASS) {	}
+											: MxClass(mxUINT64_CLASS) {}
 template <> inline MxNumericClass<float>::MxNumericClass()
-											: MxClass(mxSINGLE_CLASS) {	}
+											: MxClass(mxSINGLE_CLASS) {}
 template <> inline MxNumericClass<double>::MxNumericClass()
-											: MxClass(mxDOUBLE_CLASS) {	}
+											: MxClass(mxDOUBLE_CLASS) {}
 template <> inline MxNumericClass<mxLogical>::MxNumericClass()
-											: MxClass(mxLOGICAL_CLASS) {	}
+											: MxClass(mxLOGICAL_CLASS) {}
 
 class MxStringClass : public MxClass {
 public:
 	MxStringClass()
-				: MxClass(mxCHAR_CLASS) {	}
+				: MxClass(mxCHAR_CLASS) {}
 };
 
 class MxCellClass : public MxClass {
 public:
 	MxCellClass()
-			: MxClass(mxCELL_CLASS) {	}
+			: MxClass(mxCELL_CLASS) {}
 };
 
 class MxStructClass : public MxClass {
 public:
 	MxStructClass()
-				: MxClass(mxSTRUCT_CLASS) {	}
+				: MxClass(mxSTRUCT_CLASS) {}
 };
 
 namespace detail {
@@ -177,23 +182,12 @@ public:
 	MxArray() = default;
 
 	/*
-	 * Only copies pointer, does not do "deep copy". Care must be taken when
-	 * using this constructor to avoid slicing of derived classes.
+	 * The following only copy pointer, and do not perform "deep copy". Also,
+	 * care must be taken when using copy constructor and assignment, to avoid
+	 * slicing of derived classes.
 	 */
 	MxArray(const MxArray& other) = default;
-//	MxArray(const MxArray& other) :
-//		m_array(other.m_array),
-//		m_class(other.m_class) {	}
-
-	/*
-	 * Only copies pointer, does not do "deep copy".  Care must be taken when
-	 * using this operator to avoid slicing of derived classes.
-	 */
 	MxArray& operator=(const MxArray& other) = default;
-//	MxArray& operator=(MxArray other) {
-//		swap(*this, other);
-//		return *this;
-//	}
 
 	MxArray(MxArray&& other) = default;
 	MxArray& operator=(MxArray&& other) = default;
@@ -207,9 +201,9 @@ public:
 	/*
 	 * Only copies pointer, does not do "deep copy".
 	 */
-	explicit MxArray(const detail::PMxArrayNative array)
-					: m_array(array),
-					  m_class() {	}
+	explicit MxArray(const detail::PMxArrayNative array) :
+			m_array(array),
+			m_class() {}
 
 	inline detail::PMxArrayNative get_array() const {
 		return m_array;
@@ -309,11 +303,11 @@ public:
 protected:
 	explicit MxArray(const MxClass& mxClass)
 					: m_array(),
-					  m_class(mxClass) {	}
+					  m_class(mxClass) {}
 
-	MxArray(const detail::PMxArrayNative array, const MxClass& mxClass)
-			: m_array(array),
-			  m_class(mxClass) {	}
+	MxArray(const detail::PMxArrayNative array, const MxClass& mxClass) :
+			m_array(array),
+			m_class(mxClass) {}
 
 	inline mxClassID getInternalClass() const {
 		return mxGetClassID(get_array());
@@ -326,125 +320,76 @@ private:
 
 namespace detail {
 using PMxArray = MxArray*;
+using array2D = std::array<mwSize, 2>;
 }  // namespace detail
 
 
 template <typename NumericType>
 class MxNumeric : public MxArray {
 public:
-	MxNumeric()
-			: MxArray(MxNumericClass<NumericType>()) {	}
+	MxNumeric() :
+			MxArray(MxNumericClass<NumericType>()) {}
 
 	MxNumeric(const MxNumeric<NumericType>& other) = default;
-//	MxNumeric(const MxNumeric<NumericType>& other)
-//			: MxArray(other.get_array(),
-//					MxNumericClass<NumericType>()) {	}
 
 	MxNumeric<NumericType>& operator=(const MxNumeric<NumericType>& other)
 																	= default;
-//	MxNumeric<NumericType>& operator=(MxNumeric<NumericType> other) {
-//		swap(*this, other);
-//		return *this;
-//	}
 
 	MxNumeric(MxNumeric<NumericType>&& other) = default;
 	MxNumeric<NumericType>& operator=(MxNumeric<NumericType>&& other) = default;
 
-//	friend void swap(MxNumeric<NumericType>& first,
-//											MxNumeric<NumericType>& second) {
-//		using std::swap;
-//		swap(static_cast<MxArray&>(first), static_cast<MxArray&>(second));
-//	}
-
-	explicit MxNumeric(const detail::PMxArrayNative array)
-					: MxArray(array, MxNumericClass<NumericType>()) {
+	explicit MxNumeric(const detail::PMxArrayNative array) :
+			MxArray(array, MxNumericClass<NumericType>()) {
 		mexAssert(get_class().get_classId() == mxGetClassID(array));
 	}
 
 	template <typename IndexType>
-	MxNumeric(const IndexType numRows, const IndexType numColumns)
-			: MxArray(mxCreateNumericMatrix(static_cast<mwSize>(numRows),
-											static_cast<mwSize>(numColumns),
-											MxNumericClass<NumericType>()
-												.get_classId(),
-											mxREAL),
-					MxNumericClass<NumericType>()) {	}
-
-	template <typename IndexType>
-	MxNumeric(const IndexType numDims, const IndexType *dims)
-			: MxArray(mxCreateNumericArray(static_cast<mwSize>(numDims),
-										&(std::vector<mwSize>(dims,
-															dims + numDims)[0]),
+	MxNumeric(const IndexType numDims, const IndexType *dims) :
+			MxNumeric(mxCreateNumericArray(static_cast<mwSize>(numDims),
+										std::vector<mwSize>(dims,
+															dims + numDims)
+											.data(),
 										MxNumericClass<NumericType>()
 											.get_classId(),
-										mxREAL),
-					MxNumericClass<NumericType>()) {	}
+										mxREAL)) {}
 
-	template <typename IndexType>
-	MxNumeric(const NumericType* arrVar,
-			const IndexType numRows,
-			const IndexType numColumns)
-			: MxArray(mxCreateNumericMatrix(static_cast<mwSize>(numRows),
-											static_cast<mwSize>(numColumns),
-											MxNumericClass<NumericType>()
-												.get_classId(),
-											mxREAL),
-					MxNumericClass<NumericType>()) {
-		init(arrVar);
-	}
-
-	explicit MxNumeric(const NumericType scalarVar)
-					: MxArray(mxCreateNumericMatrix(static_cast<mwSize>(1),
-												static_cast<mwSize>(1),
-												MxNumericClass<NumericType>()
-													.get_classId(),
-												mxREAL),
-							MxNumericClass<NumericType>()) {
-		init(&scalarVar);
-	}
-
-	explicit MxNumeric(const std::vector<NumericType>& vecVar)
-					: MxArray(mxCreateNumericMatrix(static_cast<mwSize>(
-																vecVar.size()),
-												static_cast<mwSize>(1),
-												MxNumericClass<NumericType>()
-													.get_classId(),
-												mxREAL),
-							MxNumericClass<NumericType>()) {
-		NumericType *val = static_cast<NumericType*>(mxGetData(get_array()));
-		std::copy(vecVar.begin(), vecVar.end(), val);
-		/*
-		 * TODO: Find why this causes lvalue problem.
-		 */
-//		init(&vecVar[0]);
-	}
+//	template <>
+//	MxNumeric(const mwSize numDims, const mwSize *dims) :
+//			MxNumeric(mxCreateNumericArray(numDims, dims,
+//										MxNumericClass<NumericType>()
+//											.get_classId(),
+//										mxREAL)) {}
 
 	template <typename IndexType>
 	MxNumeric(const NumericType* arrVar,
 			const IndexType numDims,
 			const IndexType *dims)
-			: MxArray(mxCreateNumericArray(static_cast<mwSize>(numDims),
-										&(std::vector<mwSize>(dims,
-															dims + numDims)[0]),
-										MxNumericClass<NumericType>()
-											.get_classId(),
-										mxREAL),
-					MxNumericClass<NumericType>()) {
+			: MxNumeric(numDims, dims) {
 		init(arrVar);
 	}
 
 	template <typename IndexType>
-	MxNumeric(const NumericType* arrVar,
-			const std::vector<IndexType>& dims)
-			: MxArray(mxCreateNumericArray(static_cast<mwSize>(dims.size()),
-										&(std::vector<mwSize>(dims.begin(),
-															dims.end())[0]),
-										MxNumericClass<NumericType>()
-											.get_classId(),
-										mxREAL),
-					MxNumericClass<NumericType>()) {
-		init(arrVar);
-	}
+	MxNumeric(const IndexType numRows, const IndexType numColumns) :
+			MxNumeric(static_cast<mwSize>(2),
+					detail::array2D{numRows, numColumns}.data()) {}
+
+	template <typename IndexType>
+	MxNumeric(const NumericType* arrVar, const IndexType numRows,
+			const IndexType numColumns) :
+			MxNumeric(arrVar, static_cast<mwSize>(2),
+					detail::array2D{numRows, numColumns}.data()) {}
+
+	explicit MxNumeric(const NumericType scalarVar) :
+			MxNumeric(&scalarVar, static_cast<mwSize>(2),
+					detail::array2D{1, 1}.data()) {}
+
+	explicit MxNumeric(const std::vector<NumericType>& vecVar) :
+			MxNumeric(vecVar.data(), static_cast<mwSize>(2),
+					detail::array2D{vecVar.size(), 1}.data()) {}
+
+	template <typename IndexType>
+	MxNumeric(const NumericType* arrVar, const std::vector<IndexType>& dims) :
+			MxNumeric(arrVar, dims.size(), dims.data()) {}
 
 	template <typename IndexType>
 	inline NumericType& operator[](IndexType i) {
@@ -603,12 +548,12 @@ public:
 
 	MxString() :
 			MxArray(MxStringClass()),
-			m_string() {	}
+			m_string() {}
 
 	MxString(const MxString& other) = default;
 //	MxString(const MxString& other)
 //			: MxArray(other.get_array(), MxStringClass()),
-//			  m_string(other.get_string()) {	}
+//			  m_string(other.get_string()) {}
 
 	MxString& operator=(const MxString& other) = default;
 //	MxString& operator=(const MxString& other) {
@@ -640,11 +585,11 @@ public:
 
 	explicit MxString(const std::string& string)
 					: MxArray(mxCreateString(string.c_str()), MxStringClass()),
-					  m_string(string) {	}
+					  m_string(string) {}
 
 	explicit MxString(const char* cString)
 					: MxArray(mxCreateString(cString), MxStringClass()),
-					  m_string(cString) {	}
+					  m_string(cString) {}
 
 	inline void clone(const MxString& other) {
 		mexAssert(getDimensions() == other.getDimensions());
@@ -696,11 +641,11 @@ class MxCell : public MxArray {
 public:
 
 	MxCell() :
-			MxArray(MxCellClass()) {	}
+			MxArray(MxCellClass()) {}
 
 	MxCell(const MxCell& other) = default;
 //	MxCell(const MxCell& other)
-//		: MxArray(other.get_array(), MxCellClass()) {	}
+//		: MxArray(other.get_array(), MxCellClass()) {}
 
 	MxCell& operator=(const MxCell& other) = default;
 //	MxCell& operator=(const MxCell& other) {
@@ -727,14 +672,14 @@ public:
 	MxCell(const IndexType numRows, const IndexType numColumns)
 		: MxArray(mxCreateCellMatrix(static_cast<mwSize>(numRows),
 									static_cast<mwSize>(numColumns)),
-				MxCellClass()) {	}
+				MxCellClass()) {}
 
 	template <typename IndexType>
 	MxCell(const IndexType numDims, const IndexType *dims)
 		: MxArray(mxCreateCellArray(static_cast<mwSize>(numDims),
 									&(std::vector<mwSize>(dims,
 														dims + numDims)[0])),
-				MxCellClass()) {	}
+				MxCellClass()) {}
 
 	template <typename IndexType>
 	MxCell(const detail::PMxArrayNative* arrVar,
@@ -880,11 +825,11 @@ private:
 class MxStruct : public MxArray {
 public:
 	MxStruct() :
-			MxArray(MxStructClass()) {	}
+			MxArray(MxStructClass()) {}
 
 	MxStruct(const MxStruct& other) = default;
 //	MxStruct(const MxStruct& other)
-//			: MxArray(other.get_array(), MxStructClass()) {	}
+//			: MxArray(other.get_array(), MxStructClass()) {}
 
 	MxStruct& operator=(const MxStruct& other) = default;
 //	MxStruct& operator=(const MxStruct& other) {
@@ -1167,7 +1112,7 @@ private:
 //	virtual void setValue(const MxArray& value) const = 0;
 //	virtual MxString getName() const = 0;
 //
-//	virtual ~MxAttributeInterface() {	};
+//	virtual ~MxAttributeInterface() {};
 //
 //};
 
@@ -1181,7 +1126,7 @@ private:
 //					const mex::MxArray& attribute) = 0;
 //	virtual void setAttribute(const mex::MxStruct& attributes) = 0;
 //
-//	virtual ~MxObjectInterface() {	};
+//	virtual ~MxObjectInterface() {};
 //};
 
 }  // namespace mex
