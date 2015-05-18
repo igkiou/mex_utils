@@ -137,6 +137,9 @@ protected:
 	}
 
 private:
+	/*
+	 * TODO: Maybe declare const.
+	 */
 	MATFile* m_file;
 };
 
