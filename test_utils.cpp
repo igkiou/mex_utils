@@ -144,4 +144,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	file.write(temp, "temp1");
 	plhs[1] = file.read(varnames[0]).get_array();
 	file.clear(varnames[0]);
+
+	mex::MatInputFile matfile("igkiou.mat");
+	matfile.readNextVariable();
+
 }

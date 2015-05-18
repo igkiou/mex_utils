@@ -17,8 +17,8 @@
 #include <cstring>
 
 /*
- * TODO: Maybe include these inside mex namespace, to make sure mex:: needs to
- * be used? Check if this actually works.
+ * TODO: Replace mex includes with extern declarations, to avoid namespace
+ * contamination.
  * TODO: Add a nargin/out checker.
  */
 #include "mex.h"
@@ -1103,6 +1103,72 @@ public:
 private:
 	std::map<T, U> m_mapLeftToRight;
 	std::map<U, T> m_mapRightToLeft;
+};
+
+class MxArrayHeader {
+public:
+	explicit MxArrayHeader(const MxArray& mxArray) :
+			m_size(mxArray.size()),
+			m_dimensions(mxArray.getDimensions()),
+			m_class(mxArray.get_class()) {}
+
+	explicit MxArrayHeader(const detail::PMxArrayNative array) :
+			MxArrayHeader(MxArray(array)) {}
+
+
+	MxArrayHeader() = default;
+	MxArrayHeader(const MxArrayHeader& other) = default;
+	MxArrayHeader& operator=(const MxArrayHeader& other) = default;
+	MxArrayHeader(MxArrayHeader&& other) = default;
+	MxArrayHeader& operator=(MxArrayHeader&& other) = default;
+
+	inline std::vector<int> getDimensions() const {
+		return m_dimensions;
+	}
+
+	inline int getNumberOfDimensions() const {
+		return m_dimensions.size();
+	}
+
+	inline mxClassID get_class() const {
+		return m_class;
+	}
+
+	template <typename NumericType>
+	inline bool isNumeric() const {
+		return m_class == MxNumericClass<NumericType>();
+	}
+
+	inline bool isString() const {
+		return m_class == MxStringClass();
+	}
+
+	inline bool isCell() const {
+		return m_class == MxCellClass();
+	}
+
+	inline bool isStruct() const {
+		return m_class == MxStructClass();
+	}
+
+private:
+	const int m_size;
+	const std::vector<int> m_dimensions;
+	const mxClassID m_class;
+};
+
+/*
+ * TODO: Better to use copied member or pointer?
+ * TODO: Is it OK to have const members here?
+ */
+struct MxVariableHeader {
+	const std::string m_name;
+	const MxArrayHeader m_header;
+};
+
+struct MxVariable {
+	const std::string m_name;
+	const MxArray* m_array;
 };
 
 //class MxAttributeInterface {
