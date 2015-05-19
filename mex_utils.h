@@ -12,6 +12,7 @@
 #include <array>
 #include <cstring>
 #include <iostream>
+#include <iterator>
 #include <map>
 #include <string>
 #include <vector>
@@ -35,16 +36,14 @@
  * TODO: Maybe add support for mxSetData? Would be unsafe.
  * TODO: Find way to do safe resource management when a malloc occurs
  * (construction is not done by an already existing PMxArrayNative). Maybe using
- * some smart pointer, or using onwer member.
+ * some smart (unique) pointer, or using onwer member.
  * TODO: Update to take advantage of C++11 move semantics, especially for better
  * safety.
  * TODO: Maybe replace default implementations with copy-and-swap?
  * TODO: Provide iterators for easy use with STL and new C++11 loops.
  * TODO: Maybe provide StringCell specialization.
- * TODO: Change MxNumeric template definition to prevent instantiations by
- * non-appropriate types.
- * TODO: Remove unsafe conversions for MxClass.
- * TODO: Make ID in MxClass directly accessible.
+ * TODO: When creating from raw mxArray*, add assert to check that data is not
+ * null.
  */
 namespace mex {
 
@@ -137,8 +136,7 @@ struct MxStructClass : public MxClass {
 };
 
 namespace detail {
-using MxArrayNative = mxArray;
-using PMxArrayNative = MxArrayNative* ;
+using PMxArrayNative = mxArray*;
 }  // namespace detail
 
 class MxArray {
@@ -265,7 +263,6 @@ namespace detail {
 using PMxArray = MxArray*;
 using array2D = std::array<mwSize, 2>;
 }  // namespace detail
-
 
 template <typename NumericType>
 class MxNumeric : public MxArray {
@@ -477,6 +474,28 @@ private:
 		return permutedIndexVector;
 	}
 };
+
+template <>
+inline MxNumeric<bool>::MxNumeric(const std::vector<bool>& vecVar) :
+		MxNumeric(static_cast<mwSize>(2),
+				detail::array2D{vecVar.size(), 1}.data()) {
+	bool* dataArray = getData();
+	int index = 0;
+	for (auto iter = std::begin(vecVar); iter < std::end(vecVar); ++iter) {
+		dataArray[index++] = *iter;
+	}
+}
+
+template <> template <std::size_t ArraySize>
+inline MxNumeric<bool>::MxNumeric(const std::array<bool, ArraySize>& arrVar) :
+		MxNumeric(static_cast<mwSize>(2),
+				detail::array2D{ArraySize, 1}.data()) {
+	bool* dataArray = getData();
+	int index = 0;
+	for (auto iter = std::begin(arrVar); iter < std::end(arrVar); ++iter) {
+		dataArray[index++] = *iter;
+	}
+}
 
 /*
  * TODO: For memory safety reasons, and because of MATLAB's internal
@@ -941,11 +960,10 @@ public:
 	explicit MxArrayHeader(const MxArray& mxArray) :
 			m_size(mxArray.size()),
 			m_dimensions(mxArray.getDimensions()),
-			m_class(mxArray.get_class()) {}
+			m_class(mxArray.getClass()) {}
 
 	explicit MxArrayHeader(const detail::PMxArrayNative array) :
 			MxArrayHeader(MxArray(array)) {}
-
 
 	MxArrayHeader() = default;
 	MxArrayHeader(const MxArrayHeader& other) = default;
@@ -961,27 +979,26 @@ public:
 		return m_dimensions.size();
 	}
 
-	inline mxClassID get_class() const {
+	inline mxClassID getClass() const {
 		return m_class;
 	}
 
 	template <typename NumericType>
 	inline bool isNumeric() const {
-		return m_class == MxNumericClass<NumericType>();
+		return (getClass() == MxNumericClass<NumericType>::m_classId);
 	}
 
 	inline bool isString() const {
-		return m_class == MxStringClass();
+		return (getClass() == MxStringClass::m_classId);
 	}
 
 	inline bool isCell() const {
-		return m_class == MxCellClass();
+		return (getClass() == MxCellClass::m_classId);
 	}
 
 	inline bool isStruct() const {
-		return m_class == MxStructClass();
+		return (getClass() == MxStructClass::m_classId);
 	}
-
 private:
 	const int m_size;
 	const std::vector<int> m_dimensions;

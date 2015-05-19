@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "mex_utils.h"
-#include "mat_utils.h"
+//#include "mat_utils.h"
 
 mex::MxString test() {
 	return mex::MxString("gkiou");
@@ -22,35 +22,6 @@ mex::MxString test2() {
 
 std::string test3() {
 	return std::string("gkiou");
-}
-
-template <typename T>
-void permute_inplace(T* data, std::vector<int> &perm) {
-	for (size_t i=0; i<perm.size(); i++) {
-		if (perm[i] != i) {
-			/* The start of a new cycle has been found. Save
-			   the value at this position, since it will be
-			   overwritten */
-			int j = (int) i;
-			T curval = data[i];
-
-			do {
-				/* Shuffle backwards */
-				int k = perm[j];
-				data[j] = data[k];
-
-				/* Also fix the permutations on the way */
-				perm[j] = j;
-				j = k;
-
-				/* Until the end of the cycle has been found */
-			} while (perm[j] != i);
-
-			/* Fix the final position with the saved value */
-			data[j] = curval;
-			perm[j] = j;
-		}
-	}
 }
 
 template < class T >
@@ -92,7 +63,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	for (int iter = 0, end = veci.size(); iter < end; ++iter) {
 		std::cout << "iter " << iter << " value "<< veci[iter] << std::endl;
 	}
-	std::vector<bool> dummy(10, false);
+	std::array<bool, 10> dummy;
 	plhs[5] = mex::MxNumeric<bool>(dummy).get_array();
 //	mexPrintf("M %d N %d size %d numel %d.\n", foo.M(), foo.N(), foo.size(), foo.numel());
 	plhs[6] = mex::MxString(std::string("gkiou")).get_array();
@@ -135,17 +106,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	double* a = (double*) malloc(100 * sizeof(double));
 	double* b = (double*) malloc(100 * sizeof(double));
 	memcpy(a, b, 100 * sizeof(double));
-	mex::MatFile file("test.mat", "r");
-	std::vector<std::string> varnames = file.getVariableNames();
-	std::cout << "number of variables: " << varnames.size() << std::endl;
-	for (int iter = 0, end = varnames.size(); iter < end; ++iter) {
-		std::cout << "variable " << iter << " name: " << varnames[iter] << std::endl;
-	}
-	file.write(temp, "temp1");
-	plhs[1] = file.read(varnames[0]).get_array();
-	file.clear(varnames[0]);
+//	mex::MatFile file("test.mat", "r");
+//	std::vector<std::string> varnames = file.getVariableNames();
+//	std::cout << "number of variables: " << varnames.size() << std::endl;
+//	for (int iter = 0, end = varnames.size(); iter < end; ++iter) {
+//		std::cout << "variable " << iter << " name: " << varnames[iter] << std::endl;
+//	}
+//	file.write(temp, "temp1");
+//	plhs[1] = file.read(varnames[0]).get_array();
+//	file.clear(varnames[0]);
 
-	mex::MatInputFile matfile("igkiou.mat");
-	matfile.readNextVariable();
+//	mex::MatInputFile matfile("igkiou.mat");
+//	matfile.readNextVariable();
 
 }
