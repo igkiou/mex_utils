@@ -127,7 +127,8 @@ public:
 	}
 
 	~MatFile() {
-		mexAssert(matClose(m_file) == 0);
+		int errorCode = matClose(m_file);
+		mexAssert(errorCode == 0);
 	}
 
 protected:
@@ -151,7 +152,7 @@ public:
 	void writeVariable(const MxVariable& variable) override = delete;
 	void deleteVariable(const std::string& vaiableName) override = delete;
 
-	virtual ~MatInputFile() {}
+	virtual ~MatInputFile() = default;
 };
 
 class MatOutputFile : MatFile {
@@ -172,7 +173,7 @@ public:
 	template <typename MxArrayType>
 	MxVariable readNextVariable() override = delete;
 
-	virtual ~MatOutputFile() {}
+	virtual ~MatOutputFile() = default;
 };
 
 }	/* namespace mex */

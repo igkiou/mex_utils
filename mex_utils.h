@@ -26,7 +26,6 @@
 #include "matrix.h"
 
 /*
- * TODO: Overarching design goal: No MATLAB internals visible to public.
  * TODO: Add struct array support.
  * TODO: Add support for initialization by const mxArray*. Probably will need to
  * create const_MxArray class and class hierarchy.
@@ -36,14 +35,15 @@
  * TODO: Maybe add support for mxSetData? Would be unsafe.
  * TODO: Find way to do safe resource management when a malloc occurs
  * (construction is not done by an already existing PMxArrayNative). Maybe using
- * some smart (unique) pointer, or using onwer member.
+ * some smart (unique) pointer, or using ownwer member.
  * TODO: Update to take advantage of C++11 move semantics, especially for better
  * safety.
- * TODO: Maybe replace default implementations with copy-and-swap?
  * TODO: Provide iterators for easy use with STL and new C++11 loops.
  * TODO: Maybe provide StringCell specialization.
  * TODO: When creating from raw mxArray*, add assert to check that data is not
  * null.
+ * TODO: Find way to remove call to get_class, or change its return type to
+ * MxClass.
  */
 namespace mex {
 
